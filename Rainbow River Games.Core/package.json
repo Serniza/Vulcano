@@ -1,0 +1,16 @@
+{
+    "author":
+    {
+        "name":"Rainbow River Games"
+    },
+    "description":"",
+    "displayName":"Rainbow River Games Core",
+    "keywords":[],
+    "name":"com.rainbow-river-games.core",
+    "repository": 
+    {
+       "type": "git",
+       "url": "https://github.com/Serniza/Vulcano.git"
+     },
+    "version":"1.0.0"
+  }
