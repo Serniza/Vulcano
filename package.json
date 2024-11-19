@@ -1,12 +1,12 @@
 {
     "author":
     {
-        "name":"Rainbow River Games"
+        "name":"Serniza Games"
     },
     "description":"",
-    "displayName":"Rainbow River Games Core",
+    "displayName":"Serniza Games Core",
     "keywords":[],
-    "name":"com.rainbow-river-games.core",
+    "name":"com.serniza-games.core",
     "repository": 
     {
        "type": "git",

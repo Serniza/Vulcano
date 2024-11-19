@@ -1,2 +1,2 @@
 # Vulcano
-Rainbow River Games core
+Serniza Games core
