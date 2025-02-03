@@ -28,15 +28,17 @@ namespace Utilities
 
                     float labelWidth = 54f;
 
-                    EditorGUI.LabelField(new Rect(position.x, position.y - 11f, labelWidth, position.height), "Type");
-
                     float fieldWidth = (position.width - labelWidth - 8f) / 2f;
+
+                    float fieldHeight = 18f;
 
                     SerializedProperty gameObject = singletonData.FindPropertyRelative("gameObject");
 
-                    EditorGUI.PropertyField(new Rect(position.x + labelWidth + fieldWidth + 8f, position.y + 3f, fieldWidth, position.height), gameObject, GUIContent.none, true);
+                    EditorGUI.PropertyField(new Rect(position.x + labelWidth + fieldWidth + 8f, position.y + 3f, fieldWidth, fieldHeight), gameObject, GUIContent.none, true);
 
-                    List<Type> types = new List<Type>
+					EditorGUI.LabelField(new Rect(position.x, position.y - 11f, labelWidth, position.height), "Type");
+
+					List<Type> types = new List<Type>
                     {
                         null
                     };
@@ -139,11 +141,12 @@ namespace Utilities
                         }
                     }
 
-                    typeIndex = EditorGUI.Popup(new Rect(position.x + labelWidth, position.y + 3f, fieldWidth, position.height), typeIndex, typesPaths.ToArray());
+                    typeIndex = EditorGUI.Popup(new Rect(position.x + labelWidth, position.y + 3f, fieldWidth, fieldHeight), typeIndex, typesPaths.ToArray());
 
                     currentType = singletonData.FindPropertyRelative("type").stringValue = (typeIndex == 0) ? "None" : types[typeIndex].AssemblyQualifiedName;
 
-					labelWidth = 54f;
+					if (!GUI.enabled)
+						GUI.enabled = true;
 
 					EditorGUI.LabelField(new Rect(position.x, position.y + 11f, labelWidth, position.height), "Interface");
 
@@ -188,7 +191,7 @@ namespace Utilities
 						interfacesPaths.Add(interfaceTypePath);
 					}
 
-					interfaceTypeIndex = EditorGUI.Popup(new Rect(position.x + labelWidth, position.y + 24f, fieldWidth, position.height), interfaceTypeIndex, interfacesPaths.ToArray());
+					interfaceTypeIndex = EditorGUI.Popup(new Rect(position.x + labelWidth, position.y + 24f, fieldWidth, fieldHeight), interfaceTypeIndex, interfacesPaths.ToArray());
 
 					singletonData.FindPropertyRelative("interfaceType").stringValue = (interfaceTypeIndex == 0) ? "None" : interfacesTypes[interfaceTypeIndex].AssemblyQualifiedName;
 
