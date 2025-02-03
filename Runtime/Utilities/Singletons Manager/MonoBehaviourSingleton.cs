@@ -14,7 +14,7 @@ namespace Utilities
 
         protected virtual void Awake()
         {
-            SingletonsManager._instance.RegisterMonoBehaviourAsSingleton(this, permanent);
+            SingletonsManager._instance.RegisterAsSingleton(this, GetType(), permanent);
         }
 
         public virtual void OnRegister() { }

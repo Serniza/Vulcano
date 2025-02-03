@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 namespace Utilities
 {
     public class SingletonsManager : UnityEngine.MonoBehaviour
-	{
+    {
         #region Variables & Properties
 
         static SingletonsManager instance;
@@ -36,7 +36,7 @@ namespace Utilities
 
                     instance.RegisterMonoBehaviours();
 
-                    DontDestroyOnLoad(instance.gameObject);                 
+                    DontDestroyOnLoad(instance.gameObject);
                 }
 
                 return instance;
@@ -61,6 +61,11 @@ namespace Utilities
         [SerializeField] List<SingletonData> singletonsData;
         Dictionary<Type, UnityEngine.MonoBehaviour> _singletons { get; set; }
 
+        public bool ContainsKey(Type type)
+        {
+            return _singletons.ContainsKey(type);
+        }
+
         #endregion
 
         void Awake()
@@ -70,17 +75,12 @@ namespace Utilities
 
         void OnEnable()
         {
-            SceneManager.sceneUnloaded += Clean;
+            SceneManager.sceneUnloaded += OnSceneUnloaded;
         }
 
         void OnDisable()
         {
-            SceneManager.sceneUnloaded -= Clean;
-        }
-
-        public bool Contains(Type type)
-        {
-            return _singletons.ContainsKey(type);
+            SceneManager.sceneUnloaded -= OnSceneUnloaded;
         }
 
         public void RegisterMonoBehaviours()
@@ -126,15 +126,17 @@ namespace Utilities
 
                         Type type = Type.GetType(singletonData._type);
 
-                        if (!_singletons.ContainsKey(type))
+                        Type interfaceType = (singletonData._interfaceType == null) ? null : Type.GetType(singletonData._interfaceType);
+
+                        if ((interfaceType == null) ? !_singletons.ContainsKey(type) : !_singletons.ContainsKey(interfaceType))
                         {
                             Component component = singletonGameObject.GetComponent(type);
 
                             if (component != null)
                             {
-								UnityEngine.MonoBehaviour monoBehaviour = (UnityEngine.MonoBehaviour)component;
+                                UnityEngine.MonoBehaviour monoBehaviour = (UnityEngine.MonoBehaviour)component;
 
-                                _singletons.Add(type, monoBehaviour);
+                                _singletons.Add((interfaceType == null) ? type : interfaceType, monoBehaviour);
 
                                 if (monoBehaviour is MonoBehaviourSingleton monoBehaviourSingleton)
                                     monoBehaviourSingleton.OnRegister();
@@ -157,27 +159,32 @@ namespace Utilities
             }
         }
 
-        public void RegisterMonoBehaviourAsSingleton<T>(T monoBehaviour, bool permanent = false) where T : UnityEngine.MonoBehaviour
-        {
-            Type type = monoBehaviour.GetType();
+		public void RegisterAsSingleton(UnityEngine.MonoBehaviour monoBehaviour, Type type, bool isPermanent = false)
+		{
+			if(!_singletons.ContainsKey(type))
+			{
+				SingletonData singletonData = new SingletonData((type.IsInterface) ? monoBehaviour.GetType().AssemblyQualifiedName : type.AssemblyQualifiedName, (type.IsInterface) ? type.AssemblyQualifiedName : null, monoBehaviour.gameObject);
 
-            if (!_singletons.ContainsKey(type))
-            {
-                SingletonData singletonData = new SingletonData(type.AssemblyQualifiedName, monoBehaviour.gameObject);
+				singletonsData.Add(singletonData);
 
-                singletonsData.Add(singletonData);
+				_singletons.Add(type, monoBehaviour);
 
-                _singletons.Add(type, monoBehaviour);
+				if (isPermanent)
+					monoBehaviour.gameObject.transform.SetParent(gameObject.transform);
 
-                if (permanent)
-                    monoBehaviour.gameObject.transform.SetParent(gameObject.transform);
+				if (monoBehaviour is MonoBehaviourSingleton monoBehaviourSingleton)
+					monoBehaviourSingleton.OnRegister();
+			}
+		}
 
-                if (monoBehaviour is MonoBehaviourSingleton monoBehaviourSingleton)
-                    monoBehaviourSingleton.OnRegister();
-            }
+        public void RegisterAsSingleton<T>(UnityEngine.MonoBehaviour monoBehaviour, bool isPermanent = false) where T : class
+		{
+            Type type = typeof(T);
+
+            RegisterAsSingleton(monoBehaviour, type, isPermanent);
         }
 
-        public T GetSingleton<T>(bool findInTheCurrentSceneIfDoesNotExist = true, bool createItIfDoesNotExist = true, bool createLikeAPermanent = false) where T : UnityEngine.MonoBehaviour
+        public T GetSingleton<T>() where T : class
         {
             Type type = typeof(T);
 
@@ -186,53 +193,17 @@ namespace Utilities
                 foreach (KeyValuePair<Type, UnityEngine.MonoBehaviour> singleton in _singletons)
                 {
                     if (singleton.Key.IsSubclassOf(type))
-                        return (T)singleton.Value;
+                        return singleton.Value as T;
                 }
             }
 
             if (_singletons.TryGetValue(type, out UnityEngine.MonoBehaviour monoBehaviour))
-                return (T)monoBehaviour;
-            else
-            {
-                if (findInTheCurrentSceneIfDoesNotExist)
-                {
-                    T instance = FindObjectOfType<T>();
+                return monoBehaviour as T;
 
-                    if (instance != null)
-                    {
-                        RegisterMonoBehaviourAsSingleton(instance);
-
-                        return instance;
-                    }
-                }
-
-                if (createItIfDoesNotExist)
-                {
-                    string singletonName = "";
-
-                    for (int i = 0, nameLength = type.Name.Length; i < nameLength; i++)
-                    {
-                        char nameLetter = type.Name[i];
-
-                        if (char.IsUpper(nameLetter))
-                            singletonName += " ";
-
-                        singletonName += nameLetter;
-                    }
-
-                    T instance = (T)new GameObject($"{Char.ToUpper(type.Name[0])}{type.Name.Substring(1)}", type).GetComponent(type);
-
-                    if (createLikeAPermanent)
-                        instance.transform.SetParent(gameObject.transform);
-
-                    return instance;
-                }
-
-                return null;
-            }
+            return null;
         }
 
-        private void Clean(Scene scene)
+        private void OnSceneUnloaded(Scene scene)
         {
             List<Type> missedTypes = new List<Type>();
 

@@ -19,7 +19,12 @@ namespace Utilities
         {
             get => type;
         }
-        [SerializeField] GameObject gameObject;
+		[SerializeField] string interfaceType;
+		public string _interfaceType
+		{
+			get => interfaceType;
+		}
+		[SerializeField] GameObject gameObject;
         public GameObject _gameObject
         {
             get => gameObject;
@@ -30,9 +35,11 @@ namespace Utilities
 
         SingletonData() { }
 
-        public SingletonData(string type, GameObject gameObject) 
+        public SingletonData(string type, string interfaceType, GameObject gameObject) 
         {
             this.type = type;
+
+            this.interfaceType = interfaceType;
 
             this.gameObject = gameObject;
         }

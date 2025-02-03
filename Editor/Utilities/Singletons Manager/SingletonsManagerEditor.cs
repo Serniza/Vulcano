@@ -28,7 +28,7 @@ namespace Utilities
 
                     float labelWidth = 54f;
 
-                    EditorGUI.LabelField(new Rect(position.x, position.y, labelWidth, position.height), "Type");
+                    EditorGUI.LabelField(new Rect(position.x, position.y - 11f, labelWidth, position.height), "Type");
 
                     float fieldWidth = (position.width - labelWidth - 8f) / 2f;
 
@@ -84,7 +84,7 @@ namespace Utilities
                         }
                     }
 
-                    List<string> typesPath = new List<string>()
+                    List<string> typesPaths = new List<string>()
                     {
                         SingletonData.DEFAULT_SINGLETON_TYPE
                     };
@@ -104,7 +104,7 @@ namespace Utilities
 
                             string typePath = type.FullName.Replace('.','/');
 
-                            typesPath.Add(typePath);
+                            typesPaths.Add(typePath);
 
                             while (type.BaseType != typeof(UnityEngine.MonoBehaviour))
                             {
@@ -134,19 +134,69 @@ namespace Utilities
 
                                 typePath = $"{typePath} {type.Name}";
 
-                                typesPath.Add(typePath);
+                                typesPaths.Add(typePath);
                             }
                         }
                     }
 
-                    typeIndex = EditorGUI.Popup(new Rect(position.x + labelWidth, position.y + 3f, fieldWidth, position.height), typeIndex, typesPath.ToArray());
+                    typeIndex = EditorGUI.Popup(new Rect(position.x + labelWidth, position.y + 3f, fieldWidth, position.height), typeIndex, typesPaths.ToArray());
 
-                    currentType = singletonData.FindPropertyRelative("type").stringValue = (typeIndex == 0) ? "None" : types[typeIndex].AssemblyQualifiedName;  
+                    currentType = singletonData.FindPropertyRelative("type").stringValue = (typeIndex == 0) ? "None" : types[typeIndex].AssemblyQualifiedName;
 
-                    if(!GUI.enabled)
+					labelWidth = 54f;
+
+					EditorGUI.LabelField(new Rect(position.x, position.y + 11f, labelWidth, position.height), "Interface");
+
+					List<Type> interfacesTypes = new List<Type>
+					{
+						null
+					};
+
+                    if (currentType == SingletonData.DEFAULT_SINGLETON_TYPE)
+                        GUI.enabled = false;
+                    else
+                        interfacesTypes.AddRange(Type.GetType(currentType).GetInterfaces());
+
+					int interfaceTypeIndex = 0;
+
+					string currentInterfaceType = singletonData.FindPropertyRelative("interfaceType").stringValue;
+
+					if (currentInterfaceType != SingletonData.DEFAULT_SINGLETON_TYPE)
+					{
+						for (int j = 1, interfacesTypesCount = interfacesTypes.Count; j < interfacesTypesCount; j++)
+						{
+							if (interfacesTypes[j].AssemblyQualifiedName == currentInterfaceType)
+							{
+								interfaceTypeIndex = j;
+
+								break;
+							}
+						}
+					}
+
+					List<string> interfacesPaths = new List<string>()
+					{
+						SingletonData.DEFAULT_SINGLETON_TYPE
+					};
+
+                    for (int j = 1, interfacesTypesCount = interfacesTypes.Count; j < interfacesTypesCount; j++)
+                    {
+						Type interfaceType = interfacesTypes[j];
+
+						string interfaceTypePath = interfaceType.FullName.Replace('.', '/');
+
+						interfacesPaths.Add(interfaceTypePath);
+					}
+
+					interfaceTypeIndex = EditorGUI.Popup(new Rect(position.x + labelWidth, position.y + 24f, fieldWidth, position.height), typeIndex, interfacesPaths.ToArray());
+
+					singletonData.FindPropertyRelative("interfaceType").stringValue = (interfaceTypeIndex == 0) ? "None" : interfacesTypes[interfaceTypeIndex].AssemblyQualifiedName;
+
+					if (!GUI.enabled)
                         GUI.enabled = true;
                 },
-            };
+				elementHeight = 43f
+			};
         }
 
         public override void OnInspectorGUI()
