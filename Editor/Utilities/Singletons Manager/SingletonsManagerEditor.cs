@@ -188,7 +188,7 @@ namespace Utilities
 						interfacesPaths.Add(interfaceTypePath);
 					}
 
-					interfaceTypeIndex = EditorGUI.Popup(new Rect(position.x + labelWidth, position.y + 24f, fieldWidth, position.height), typeIndex, interfacesPaths.ToArray());
+					interfaceTypeIndex = EditorGUI.Popup(new Rect(position.x + labelWidth, position.y + 24f, fieldWidth, position.height), interfaceTypeIndex, interfacesPaths.ToArray());
 
 					singletonData.FindPropertyRelative("interfaceType").stringValue = (interfaceTypeIndex == 0) ? "None" : interfacesTypes[interfaceTypeIndex].AssemblyQualifiedName;
 
