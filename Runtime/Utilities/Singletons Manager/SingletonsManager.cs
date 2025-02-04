@@ -184,7 +184,7 @@ namespace Utilities
             RegisterAsSingleton(monoBehaviour, type, isPermanent);
         }
 
-        public T GetSingleton<T>() where T : class
+        public T GetSingleton<T>(bool findIfNotExists = true) where T : class
         {
             Type type = typeof(T);
 
@@ -199,6 +199,20 @@ namespace Utilities
 
             if (_singletons.TryGetValue(type, out UnityEngine.MonoBehaviour monoBehaviour))
                 return monoBehaviour as T;
+            else
+            {
+				if (findIfNotExists && type.IsSubclassOf(typeof(MonoBehaviour)))
+				{
+					monoBehaviour = (UnityEngine.MonoBehaviour)FindObjectOfType(type);
+
+					if (instance != null)
+					{
+						RegisterAsSingleton(monoBehaviour, type);
+
+						return instance as T;
+					}
+				}
+			}
 
             return null;
         }
