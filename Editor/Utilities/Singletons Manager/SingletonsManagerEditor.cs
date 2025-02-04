@@ -70,7 +70,7 @@ namespace Utilities
 
 					for (int j = 1, typesCount = types.Count; j < typesCount; j++)
 					{
-						Type type = types[i];
+						Type type = types[j];
 
 						string typePath = type.FullName.Replace('.', '/');
 
