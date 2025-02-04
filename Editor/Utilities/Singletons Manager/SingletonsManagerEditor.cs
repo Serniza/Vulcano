@@ -68,46 +68,55 @@ namespace Utilities
                         SingletonData.DEFAULT_SINGLETON_TYPE
                     };
 
-					for (int j = 1, typesCount = types.Count; j < typesCount; j++)
+					if (gameObject.objectReferenceValue != null)
 					{
-						Type type = types[j];
+						List<UnityEngine.MonoBehaviour> monobehaviours = new List<UnityEngine.MonoBehaviour>(((GameObject)gameObject.objectReferenceValue).GetComponents<UnityEngine.MonoBehaviour>());
 
-						string typePath = type.FullName.Replace('.', '/');
-
-						typesPaths.Add(typePath);
-
-						while (type.BaseType != typeof(UnityEngine.MonoBehaviour))
+						for (int j = 0, monobehavioursCount = monobehaviours.Count; j < monobehavioursCount; j++)
 						{
-							type = type.BaseType;
+							UnityEngine.MonoBehaviour monobehaviour = monobehaviours[j];
 
-							string[] lastTypePath = typePath.Split(' ');
+							if (monobehaviour == null)
+								continue;
 
-							if (lastTypePath.Length == 1)
+							Type type = monobehaviour.GetType();
+
+							string typePath = type.FullName.Replace('.', '/');
+
+							typesPaths.Add(typePath);
+
+							while (type.BaseType != typeof(UnityEngine.MonoBehaviour))
 							{
-								List<string> nameSpaces = new List<string>(lastTypePath[0].Split('/'));
+								type = type.BaseType;
 
-								if (nameSpaces.Count >= 2)
+								string[] lastTypePath = typePath.Split(' ');
+
+								if (lastTypePath.Length == 1)
 								{
-									lastTypePath[lastTypePath.Length - 1] = nameSpaces[nameSpaces.Count - 1];
+									List<string> nameSpaces = new List<string>(lastTypePath[0].Split('/'));
 
-									nameSpaces.RemoveAt(nameSpaces.Count - 1);
+									if (nameSpaces.Count >= 2)
+									{
+										lastTypePath[lastTypePath.Length - 1] = nameSpaces[nameSpaces.Count - 1];
 
-									lastTypePath[lastTypePath.Length - 1] = $"{string.Join("/", nameSpaces.ToArray())}/({lastTypePath[lastTypePath.Length - 1]})";
+										nameSpaces.RemoveAt(nameSpaces.Count - 1);
+
+										lastTypePath[lastTypePath.Length - 1] = $"{string.Join("/", nameSpaces.ToArray())}/({lastTypePath[lastTypePath.Length - 1]})";
+									}
+									else
+										lastTypePath[lastTypePath.Length - 1] = $"({lastTypePath[lastTypePath.Length - 1]})";
 								}
 								else
 									lastTypePath[lastTypePath.Length - 1] = $"({lastTypePath[lastTypePath.Length - 1]})";
+
+								typePath = string.Join(" ", lastTypePath);
+
+								typePath = $"{typePath} {type.Name}";
+
+								typesPaths.Add(typePath);
 							}
-							else
-								lastTypePath[lastTypePath.Length - 1] = $"({lastTypePath[lastTypePath.Length - 1]})";
-
-							typePath = string.Join(" ", lastTypePath);
-
-							typePath = $"{typePath} {type.Name}";
-
-							typesPaths.Add(typePath);
 						}
 					}
-
 					int typeIndex = 0;
 
 					string currentType = singletonData.FindPropertyRelative("type").stringValue;
