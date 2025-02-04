@@ -8,13 +8,13 @@ namespace Utilities
         #region Variables & Properties
 
         [Foldout("Variables & Properties")]
-        [SerializeField] bool permanent;
+        [SerializeField] bool isPermanent;
 
         #endregion
 
         protected virtual void Awake()
         {
-            SingletonsManager._instance.RegisterAsSingleton(this, GetType(), permanent);
+            SingletonsManager._instance.RegisterMonoBehaviourAs(GetType(), this, isPermanent);
         }
 
         public virtual void OnRegister() { }

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -126,16 +125,17 @@ namespace Utilities
 
                         Type type = Type.GetType(singletonData._type);
 
-                        Type interfaceType = (singletonData._interfaceType == null) ? null : Type.GetType(singletonData._interfaceType);
+                        Type interfaceType = null;
 
-                        if ((interfaceType == null) ? !_singletons.ContainsKey(type) : !_singletons.ContainsKey(interfaceType))
+                        if (singletonData._interfaceType != SingletonData.DEFAULT_SINGLETON_TYPE)
+                            interfaceType = Type.GetType(singletonData._interfaceType);
+
+						if ((interfaceType == null) ? !_singletons.ContainsKey(type) : !_singletons.ContainsKey(interfaceType))
                         {
-                            Component component = singletonGameObject.GetComponent(type);
+							UnityEngine.MonoBehaviour monoBehaviour = (UnityEngine.MonoBehaviour)singletonGameObject.GetComponent(type);
 
-                            if (component != null)
+                            if (monoBehaviour != null)
                             {
-                                UnityEngine.MonoBehaviour monoBehaviour = (UnityEngine.MonoBehaviour)component;
-
                                 _singletons.Add((interfaceType == null) ? type : interfaceType, monoBehaviour);
 
                                 if (monoBehaviour is MonoBehaviourSingleton monoBehaviourSingleton)
@@ -159,11 +159,11 @@ namespace Utilities
             }
         }
 
-		public void RegisterAsSingleton(UnityEngine.MonoBehaviour monoBehaviour, Type type, bool isPermanent = false)
+		public void RegisterMonoBehaviourAs(Type type, UnityEngine.MonoBehaviour monoBehaviour, bool isPermanent = false)
 		{
-			if(!_singletons.ContainsKey(type))
+			if((type.IsSubclassOf(typeof(UnityEngine.MonoBehaviour)) || type.IsInterface) && !_singletons.ContainsKey(type))
 			{
-				SingletonData singletonData = new SingletonData((type.IsInterface) ? monoBehaviour.GetType().AssemblyQualifiedName : type.AssemblyQualifiedName, (type.IsInterface) ? type.AssemblyQualifiedName : null, monoBehaviour.gameObject);
+				SingletonData singletonData = new SingletonData((type.IsSubclassOf(typeof(UnityEngine.MonoBehaviour))) ? type.AssemblyQualifiedName : monoBehaviour.GetType().AssemblyQualifiedName, (type.IsInterface) ? type.AssemblyQualifiedName : null, monoBehaviour.gameObject);
 
 				singletonsData.Add(singletonData);
 
@@ -177,11 +177,11 @@ namespace Utilities
 			}
 		}
 
-        public void RegisterAsSingleton<T>(UnityEngine.MonoBehaviour monoBehaviour, bool isPermanent = false) where T : class
+        public void RegisterMonoBehaviourAs<T>(UnityEngine.MonoBehaviour monoBehaviour, bool isPermanent = false) where T : class
 		{
             Type type = typeof(T);
 
-            RegisterAsSingleton(monoBehaviour, type, isPermanent);
+            RegisterMonoBehaviourAs(type, monoBehaviour, isPermanent);
         }
 
         public T GetSingleton<T>(bool findIfNotExists = true) where T : class
@@ -199,18 +199,15 @@ namespace Utilities
 
             if (_singletons.TryGetValue(type, out UnityEngine.MonoBehaviour monoBehaviour))
                 return monoBehaviour as T;
-            else
+            else if(type.IsSubclassOf(typeof(MonoBehaviour)) && findIfNotExists)
             {
-				if (findIfNotExists && type.IsSubclassOf(typeof(MonoBehaviour)))
+				monoBehaviour = (UnityEngine.MonoBehaviour)FindObjectOfType(type);
+
+				if (monoBehaviour != null)
 				{
-					monoBehaviour = (UnityEngine.MonoBehaviour)FindObjectOfType(type);
+					RegisterMonoBehaviourAs(type, monoBehaviour);
 
-					if (instance != null)
-					{
-						RegisterAsSingleton(monoBehaviour, type);
-
-						return instance as T;
-					}
+					return monoBehaviour as T;
 				}
 			}
 
