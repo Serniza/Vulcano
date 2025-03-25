@@ -17,7 +17,7 @@ namespace Attributes
 
 		List<object> properties;
 
-        Vector2 standardSpacing = new Vector2(14f, 16f);
+        Vector2 standardSpacing = new Vector2(15f, 16f);
 
         #endregion
 
