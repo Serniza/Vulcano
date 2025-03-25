@@ -1,2 +1,2 @@
 # Vulcano
-Serniza Games core
+Serniza Games core package
