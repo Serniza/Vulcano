@@ -1,4 +1,5 @@
 using Attributes;
+using System;
 using UnityEngine;
 
 namespace Utilities
@@ -14,7 +15,12 @@ namespace Utilities
 
         protected virtual void Awake()
         {
-            SingletonsManager._instance.RegisterMonoBehaviourAs(GetType(), this, isPermanent);
+            Type type = GetType();
+
+            while (type.BaseType != typeof(MonoBehaviourSingleton))
+                type = type.BaseType;
+
+			SingletonsManager._instance.RegisterMonoBehaviourAs(type, this, isPermanent);
         }
 
         public virtual void OnRegister() { }
