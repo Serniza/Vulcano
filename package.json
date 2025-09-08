@@ -1,0 +1,16 @@
+{
+    "author":
+    {
+        "name":"Serniza Games"
+    },
+    "description":"",
+    "displayName":"Serniza Games Core",
+    "keywords":[],
+    "name":"com.serniza-games.core",
+    "repository": 
+    {
+       "type": "git",
+       "url": "https://github.com/Serniza/Vulcano.git"
+     },
+    "version":"1.1.3"
+  }
