@@ -22,8 +22,8 @@ namespace Utilities
         }
 
 		[SerializeField]
-		private MonoBehaviour monoBehaviour;
-		public MonoBehaviour MonoBehaviour
+		private UnityEngine.MonoBehaviour monoBehaviour;
+		public UnityEngine.MonoBehaviour MonoBehaviour
 		{
 			get => monoBehaviour;
 			set => monoBehaviour = value;
@@ -33,7 +33,7 @@ namespace Utilities
 
 		SingletonData() { }
 
-        public SingletonData(string type, GameObject gameObject, MonoBehaviour monoBehaviour) 
+        public SingletonData(string type, GameObject gameObject, UnityEngine.MonoBehaviour monoBehaviour) 
         {
             this.type = type;
 

@@ -5,7 +5,7 @@ namespace Utilities
 {
 	public abstract class Panel : MonoBehaviour
 	{
-		#region Components
+		#region Game Objects & External Components
 
 		protected PanelsManager panelsManager;
 

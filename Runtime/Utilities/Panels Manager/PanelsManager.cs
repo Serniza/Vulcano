@@ -6,9 +6,9 @@ namespace Utilities
 {
 	public abstract class PanelsManager : SingletonMonoBehaviour
 	{
-		#region GameObjects & External Components
+		#region Game Objects & External Components
 
-		[Foldout("PanelsManager/GameObjects & External Components")]
+		[Foldout("PanelsManager/Game Objects & External Components")]
 		[ReadOnly][SerializeField] protected List<Panel> activePanels;
 
 		#endregion

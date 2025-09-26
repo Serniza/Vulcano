@@ -34,25 +34,25 @@ namespace Utilities
 
 					EditorGUI.PropertyField(new Rect(position.x + labelWidth + fieldSize.x + 8f, position.y + 3f, fieldSize.x, fieldSize.y), gameObjectProperty, GUIContent.none, true);
 
-					List<KeyValuePair<Type, MonoBehaviour>> typeMonoBehaviourPairs = new List<KeyValuePair<Type, MonoBehaviour>>
+					List<KeyValuePair<Type, UnityEngine.MonoBehaviour>> typeMonoBehaviourPairs = new List<KeyValuePair<Type, UnityEngine.MonoBehaviour>>
 					{
-						new KeyValuePair<Type, MonoBehaviour>(null, null)
+						new KeyValuePair<Type, UnityEngine.MonoBehaviour>(null, null)
 					};
 
 					if (gameObjectProperty.objectReferenceValue != null)
 					{
-						List<MonoBehaviour> monoBehaviours = new List<MonoBehaviour>(((GameObject)gameObjectProperty.objectReferenceValue).GetComponents<MonoBehaviour>());
+						List<UnityEngine.MonoBehaviour> monoBehaviours = new List<UnityEngine.MonoBehaviour>(((GameObject)gameObjectProperty.objectReferenceValue).GetComponents<UnityEngine.MonoBehaviour>());
 
 						for (int j = 0, monoBehavioursCount = monoBehaviours.Count; j < monoBehavioursCount; j++)
 						{
-							MonoBehaviour monoBehaviour = monoBehaviours[j];
+							UnityEngine.MonoBehaviour monoBehaviour = monoBehaviours[j];
 
 							if (monoBehaviour == null)
 								continue;
 
 							Type type = monoBehaviour.GetType();
 
-							typeMonoBehaviourPairs.Add(new KeyValuePair<Type, MonoBehaviour>(type, monoBehaviour));
+							typeMonoBehaviourPairs.Add(new KeyValuePair<Type, UnityEngine.MonoBehaviour>(type, monoBehaviour));
 
 							Type[] interfacesTypes = type.GetInterfaces();
 
@@ -60,14 +60,17 @@ namespace Utilities
 							{
 								Type interfaceType = interfacesTypes[k];
 
-								typeMonoBehaviourPairs.Add(new KeyValuePair<Type, MonoBehaviour>(interfaceType, monoBehaviour));
+								typeMonoBehaviourPairs.Add(new KeyValuePair<Type, UnityEngine.MonoBehaviour>(interfaceType, monoBehaviour));
 							}
 
-							while (type.BaseType != typeof(MonoBehaviour))
+							while (type.BaseType != typeof(UnityEngine.MonoBehaviour))
 							{
 								type = type.BaseType;
 
-								typeMonoBehaviourPairs.Add(new KeyValuePair<Type, MonoBehaviour>(type, monoBehaviour));
+								if (type == typeof(MonoBehaviour))
+									continue;
+
+								typeMonoBehaviourPairs.Add(new KeyValuePair<Type, UnityEngine.MonoBehaviour>(type, monoBehaviour));
 							}
 						}
 					}
@@ -82,9 +85,9 @@ namespace Utilities
 					{
 						for (int j = 1, typeMonoBehaviourPairsCount = typeMonoBehaviourPairs.Count; j < typeMonoBehaviourPairsCount; j++)
 						{
-							KeyValuePair<Type, MonoBehaviour> typeMonoBehaviourPair = typeMonoBehaviourPairs[j];
+							KeyValuePair<Type, UnityEngine.MonoBehaviour> typeMonoBehaviourPair = typeMonoBehaviourPairs[j];
 
-							if (typeMonoBehaviourPair.Key.AssemblyQualifiedName == typeProperty.stringValue && typeMonoBehaviourPair.Value == (MonoBehaviour)monoBehaviourProperty.objectReferenceValue)
+							if (typeMonoBehaviourPair.Key.AssemblyQualifiedName == typeProperty.stringValue && typeMonoBehaviourPair.Value == (UnityEngine.MonoBehaviour)monoBehaviourProperty.objectReferenceValue)
 							{
 								typeIndex = j;
 
