@@ -11,16 +11,16 @@ namespace Utilities
     {
         #region Variables & Properties
 
-        SerializedProperty singletonsData;
+        SerializedProperty singletonsDataProperty;
         ReorderableList singletonsDataList;
 
         #endregion
 
         void OnEnable()
         {
-            singletonsData = serializedObject.FindProperty("singletonsData");
+            singletonsDataProperty = serializedObject.FindProperty("singletonsData");
 
-            singletonsDataList = new ReorderableList(serializedObject, singletonsData, true, false, true, true)
+            singletonsDataList = new ReorderableList(serializedObject, singletonsDataProperty, true, false, true, true)
 			{
 				drawElementCallback = (Rect position, int i, bool isActive, bool isFocused) =>
 				{
@@ -28,104 +28,63 @@ namespace Utilities
 
 					Vector2 fieldSize = new Vector2((position.width - labelWidth - 8f) / 2f, 18f);
 
-					SerializedProperty singletonData = singletonsData.GetArrayElementAtIndex(i);
+					SerializedProperty singletonData = singletonsDataProperty.GetArrayElementAtIndex(i);
 
-					SerializedProperty gameObject = singletonData.FindPropertyRelative("gameObject");
+					SerializedProperty gameObjectProperty = singletonData.FindPropertyRelative("gameObject");
 
-					EditorGUI.PropertyField(new Rect(position.x + labelWidth + fieldSize.x + 8f, position.y + 3f, fieldSize.x, fieldSize.y), gameObject, GUIContent.none, true);
+					EditorGUI.PropertyField(new Rect(position.x + labelWidth + fieldSize.x + 8f, position.y + 3f, fieldSize.x, fieldSize.y), gameObjectProperty, GUIContent.none, true);
 
-					List<Type> types = new List<Type>
+					List<KeyValuePair<Type, MonoBehaviour>> typeMonoBehaviourPairs = new List<KeyValuePair<Type, MonoBehaviour>>
 					{
-						null
+						new KeyValuePair<Type, MonoBehaviour>(null, null)
 					};
 
-					if (gameObject.objectReferenceValue != null)
+					if (gameObjectProperty.objectReferenceValue != null)
 					{
-						List<UnityEngine.MonoBehaviour> monobehaviours = new List<UnityEngine.MonoBehaviour>(((GameObject)gameObject.objectReferenceValue).GetComponents<UnityEngine.MonoBehaviour>());
-
-						for (int j = 0, monobehavioursCount = monobehaviours.Count; j < monobehavioursCount; j++)
-						{
-							UnityEngine.MonoBehaviour monobehaviour = monobehaviours[j];
-
-							if (monobehaviour == null)
-								continue;
-
-							Type type = monobehaviour.GetType();
-
-							types.Add(type);
-
-							while (type.BaseType != typeof(UnityEngine.MonoBehaviour))
-							{
-								type = type.BaseType;
-
-								types.Add(type);
-							}
-						}
-					}
-
-                    List<string> typesPaths = new List<string>()
-                    {
-                        SingletonData.defaultType
-                    };
-
-					if (gameObject.objectReferenceValue != null)
-					{
-						List<UnityEngine.MonoBehaviour> monoBehaviours = new List<UnityEngine.MonoBehaviour>(((GameObject)gameObject.objectReferenceValue).GetComponents<UnityEngine.MonoBehaviour>());
+						List<MonoBehaviour> monoBehaviours = new List<MonoBehaviour>(((GameObject)gameObjectProperty.objectReferenceValue).GetComponents<MonoBehaviour>());
 
 						for (int j = 0, monoBehavioursCount = monoBehaviours.Count; j < monoBehavioursCount; j++)
 						{
-							UnityEngine.MonoBehaviour monoBehaviour = monoBehaviours[j];
+							MonoBehaviour monoBehaviour = monoBehaviours[j];
 
 							if (monoBehaviour == null)
 								continue;
 
 							Type type = monoBehaviour.GetType();
 
-							string typePath = type.FullName.Replace('.', '/');
+							typeMonoBehaviourPairs.Add(new KeyValuePair<Type, MonoBehaviour>(type, monoBehaviour));
 
-							typesPaths.Add(typePath);
+							Type[] interfacesTypes = type.GetInterfaces();
 
-							while (type.BaseType != typeof(UnityEngine.MonoBehaviour))
+							for (int k = 0, interfacesTypesLength = interfacesTypes.Length; k < interfacesTypes.Length; k++)
+							{
+								Type interfaceType = interfacesTypes[k];
+
+								typeMonoBehaviourPairs.Add(new KeyValuePair<Type, MonoBehaviour>(interfaceType, monoBehaviour));
+							}
+
+							while (type.BaseType != typeof(MonoBehaviour))
 							{
 								type = type.BaseType;
 
-								string[] splitType = typePath.Split(' ');
-
-								if (splitType.Length == 1)
-								{
-									List<string> nameSpaces = new List<string>(splitType[0].Split('/'));
-
-									if (nameSpaces.Count >= 2)
-									{
-										splitType[splitType.Length - 1] = nameSpaces[nameSpaces.Count - 1];
-
-										nameSpaces.RemoveAt(nameSpaces.Count - 1);
-
-										splitType[splitType.Length - 1] = $"{string.Join("/", nameSpaces.ToArray())}/({splitType[splitType.Length - 1]})";
-									}
-									else
-										splitType[splitType.Length - 1] = $"({splitType[splitType.Length - 1]})";
-								}
-								else
-									splitType[splitType.Length - 1] = $"({splitType[splitType.Length - 1]})";
-
-								typePath = string.Join(" ", splitType);
-
-								typePath = $"{typePath} {type.Name}";
-
-								typesPaths.Add(typePath);
+								typeMonoBehaviourPairs.Add(new KeyValuePair<Type, MonoBehaviour>(type, monoBehaviour));
 							}
 						}
 					}
+
 					int typeIndex = 0;
 
-					string currentType = singletonData.FindPropertyRelative("type").stringValue;
+					SerializedProperty typeProperty = singletonData.FindPropertyRelative("type");
 
-					if (currentType != SingletonData.defaultType)
+					SerializedProperty monoBehaviourProperty = singletonData.FindPropertyRelative("monoBehaviour");
+
+					if (typeProperty.stringValue != "None")
 					{
-						for (int j = 1, typesCount = types.Count; j < typesCount; j++)
+						for (int j = 1, typeMonoBehaviourPairsCount = typeMonoBehaviourPairs.Count; j < typeMonoBehaviourPairsCount; j++)
 						{
-							if (types[j].AssemblyQualifiedName == currentType)
+							KeyValuePair<Type, MonoBehaviour> typeMonoBehaviourPair = typeMonoBehaviourPairs[j];
+
+							if (typeMonoBehaviourPair.Key.AssemblyQualifiedName == typeProperty.stringValue && typeMonoBehaviourPair.Value == (MonoBehaviour)monoBehaviourProperty.objectReferenceValue)
 							{
 								typeIndex = j;
 
@@ -134,70 +93,36 @@ namespace Utilities
 						}
 					}
 
-					EditorGUI.LabelField(new Rect(position.x, position.y - 11f, labelWidth, position.height), "Type");
+					EditorGUI.LabelField(new Rect(position.x, position.y, labelWidth, position.height), "Type");
 
-					if(typesPaths.Count == 1)
-							GUI.enabled = false;
-
-					typeIndex = EditorGUI.Popup(new Rect(position.x + labelWidth, position.y + 3f, fieldSize.x, fieldSize.y), typeIndex, typesPaths.ToArray());
-
-                    currentType = singletonData.FindPropertyRelative("type").stringValue = (typeIndex == 0) ? SingletonData.defaultType : types[typeIndex].AssemblyQualifiedName;
-
-					List<Type> interfacesTypes = new List<Type>
+					typeIndex = EditorGUI.Popup(new Rect(position.x + labelWidth, position.y + 3f, fieldSize.x, fieldSize.y), typeIndex, Array.ConvertAll(typeMonoBehaviourPairs.ToArray(), typeMonoBehaviourPair =>
 					{
-						null
-					};
+						if (typeMonoBehaviourPair.Key == null && typeMonoBehaviourPair.Value == null)
+							return "None";
 
-                    if (currentType != SingletonData.defaultType)
-						interfacesTypes.AddRange(Type.GetType(currentType).GetInterfaces());                 
+						Type monoBehaviourType = typeMonoBehaviourPair.Value.GetType();
 
-					List<string> interfacesTypesPaths = new List<string>()
-					{
-						SingletonData.defaultType
-					};
-
-                    for (int j = 1, interfacesTypesCount = interfacesTypes.Count; j < interfacesTypesCount; j++)
-                    {
-						Type interfaceType = interfacesTypes[j];
-
-						string interfaceTypePath = interfaceType.FullName.Replace('.', '/');
-
-						interfacesTypesPaths.Add(interfaceTypePath);
-					}
-
-					int interfaceTypeIndex = 0;
-
-					string currentInterfaceType = singletonData.FindPropertyRelative("interfaceType").stringValue;
-
-					if (currentInterfaceType != SingletonData.defaultType)
-					{
-						for (int j = 1, interfacesTypesCount = interfacesTypes.Count; j < interfacesTypesCount; j++)
+						if (typeMonoBehaviourPair.Key == monoBehaviourType)
+							return typeMonoBehaviourPair.Key.FullName.Replace('.', '/');
+						else
 						{
-							if (interfacesTypes[j].AssemblyQualifiedName == currentInterfaceType)
-							{
-								interfaceTypeIndex = j;
+							string type = monoBehaviourType.FullName.Replace('.', '/');
 
-								break;
-							}
+							string[] splitType = type.Split("/");
+
+							splitType[splitType.Length - 1] = $"({typeMonoBehaviourPair.Key.Name}) {splitType[splitType.Length - 1]}";
+
+							type = string.Join("/", splitType);
+
+							return type;
 						}
-					}
 
-					if (!GUI.enabled)
-						GUI.enabled = true;
+					}));
 
-					EditorGUI.LabelField(new Rect(position.x, position.y + 11f, labelWidth, position.height), "Interface");
+					typeProperty.stringValue = (typeIndex == 0) ? "None": typeMonoBehaviourPairs[typeIndex].Key.AssemblyQualifiedName;
 
-					if (interfacesTypesPaths.Count == 1)
-						GUI.enabled = false;
-
-					interfaceTypeIndex = EditorGUI.Popup(new Rect(position.x + labelWidth, position.y + 24f, fieldSize.x, fieldSize.y), interfaceTypeIndex, interfacesTypesPaths.ToArray());
-
-					singletonData.FindPropertyRelative("interfaceType").stringValue = (interfaceTypeIndex == 0) ? SingletonData.defaultType : interfacesTypes[interfaceTypeIndex].AssemblyQualifiedName;
-
-					if (!GUI.enabled)
-                        GUI.enabled = true;
-                },
-				elementHeight = 43f
+					monoBehaviourProperty.objectReferenceValue = (typeIndex == 0) ? null: typeMonoBehaviourPairs[typeIndex].Value;
+				},
 			};
         }
 

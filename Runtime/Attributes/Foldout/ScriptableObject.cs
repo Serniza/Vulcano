@@ -6,9 +6,9 @@ public class ScriptableObject : UnityEngine.ScriptableObject
 
 	#pragma warning disable CS0414
 
-    #region Variables & Properties
+	#region Variables & Properties
 
-    [HideInInspector]
+	[HideInInspector]
 	[SerializeField] string properties = "[]";
 
 	#endregion

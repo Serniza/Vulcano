@@ -1,4 +1,3 @@
-using Object = UnityEngine.Object;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +9,7 @@ namespace Attributes
 {
     [CanEditMultipleObjects]
 
-    [CustomEditor(typeof(Object), true, isFallback = true)]
+    [CustomEditor(typeof(MonoBehaviour), true, isFallback = true)]
     public class Editor : UnityEditor.Editor
     {
 		#region Variable & Properties
@@ -145,7 +144,7 @@ namespace Attributes
 
 			FieldInfo field = targetType.GetField(property.name, bindingFlags);
 
-			while (field == null && targetType.BaseType != typeof(Object))
+			while (field == null && targetType.BaseType != typeof(MonoBehaviour))
 			{
 				targetType = targetType.BaseType;
 

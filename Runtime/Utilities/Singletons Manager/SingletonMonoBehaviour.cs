@@ -27,10 +27,7 @@ namespace Utilities
         {
             Type type = GetType();
 
-            while (type.BaseType != typeof(SingletonMonoBehaviour))
-                type = type.BaseType;
-
-			SingletonsManager.Instance.RegisterMonoBehaviourAsASingleton(type, this, isPermanent);
+			SingletonsManager.Instance.RegisterMonoBehaviourAsASingleton(type, gameObject, this, isPermanent);
         }
 
         public virtual void OnRegister() { }

@@ -8,18 +8,11 @@ namespace Utilities
     {
 		#region Variables & Properties
 
-		[SerializeField] string type;
+		[SerializeField] string type = "None";
         public string Type
         {
             get => type;
         }
-		public static string defaultType = "None";
-
-		[SerializeField] string interfaceType;
-		public string InterfaceType
-		{
-			get => interfaceType;
-		}
 
 		[SerializeField] GameObject gameObject;
         public GameObject GameObject
@@ -28,17 +21,25 @@ namespace Utilities
             set => gameObject = value;
         }
 
-        #endregion
+		[SerializeField]
+		private MonoBehaviour monoBehaviour;
+		public MonoBehaviour MonoBehaviour
+		{
+			get => monoBehaviour;
+			set => monoBehaviour = value;
+		}
 
-        SingletonData() { }
+		#endregion
 
-        public SingletonData(string type, string interfaceType, GameObject gameObject) 
+		SingletonData() { }
+
+        public SingletonData(string type, GameObject gameObject, MonoBehaviour monoBehaviour) 
         {
             this.type = type;
 
-            this.interfaceType = interfaceType;
-
             this.gameObject = gameObject;
+
+            this.monoBehaviour = monoBehaviour;
         }
     }
 }
