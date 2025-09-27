@@ -9,34 +9,36 @@ namespace Utilities
 	{
         #region Variables & Properties
 
-        public static SingletonsManager Instance { get; private set; }
+		private static SingletonsManager instance;
+		public static SingletonsManager Instance
+		{
+			get
+			{
+				if (instance == null)
+				{
+					instance = FindObjectOfType<SingletonsManager>();
+
+					if (instance == null)
+						instance = new GameObject("Singletons Manager", typeof(SingletonsManager)).GetComponent<SingletonsManager>();
+					else
+					{
+						if (instance.gameObject.transform.parent != null)
+							instance.gameObject.transform.SetParent(null, true);
+					}
+
+					DontDestroyOnLoad(instance.gameObject);
+
+					instance.RegisterInitialSingletons();
+				}
+
+				return instance;
+			}
+		}
 
         [SerializeField] List<SingletonData> singletonsData;
         Dictionary<Type, UnityEngine.MonoBehaviour> Singletons { get; set; }
 
         #endregion
-
-        void Awake()
-        {
-			if (Instance == null)
-			{
-				Instance = this;
-
-				if (gameObject.transform.parent != null)
-					gameObject.transform.SetParent(null, true);
-
-				DontDestroyOnLoad(gameObject);
-
-				if (singletonsData == null)
-					singletonsData = new List<SingletonData>();
-
-				Singletons = new Dictionary<Type, UnityEngine.MonoBehaviour>();
-
-				RegisterInitialSingletons();
-			}
-			else 
-				Destroy(gameObject);
-		}
 
         void OnEnable()
         {
@@ -50,7 +52,12 @@ namespace Utilities
 
         public void RegisterInitialSingletons()
         {
-            for (int i = 0, singletonsDataCount = singletonsData.Count; i < singletonsDataCount; i++)
+			if (singletonsData == null)
+				singletonsData = new List<SingletonData>();
+
+			Singletons = new Dictionary<Type, UnityEngine.MonoBehaviour>();
+
+			for (int i = 0, singletonsDataCount = singletonsData.Count; i < singletonsDataCount; i++)
             {
                 SingletonData singletonData = singletonsData[i];
 
@@ -85,6 +92,8 @@ namespace Utilities
 
 					singletonGameObject = singletonData.GameObject = Instantiate(singletonPrefab);
 
+					singletonGameObject.name = singletonPrefab.name;
+
 					singletonGameObject.transform.SetParent(gameObject.transform);
 
 					singletonMonoBehaviour = singletonData.MonoBehaviour = (UnityEngine.MonoBehaviour)singletonGameObject.GetComponent(singletonMonoBehaviour.GetType());
@@ -103,7 +112,7 @@ namespace Utilities
 						if (nextSingletonGameObject == null)
 							continue;
 
-						UnityEngine.Object nextSingletonMonoBehaviour = nextSingletonData.MonoBehaviour;
+						UnityEngine.MonoBehaviour nextSingletonMonoBehaviour = nextSingletonData.MonoBehaviour;
 
 						if (nextSingletonGameObject == singletonPrefab)
 						{
@@ -119,10 +128,7 @@ namespace Utilities
 					Singletons.Add(singletonType, singletonMonoBehaviour);
 
 					if (singletonGameObject.transform.parent != transform)
-						singletonGameObject.transform.SetParent(transform);
-
-					if (singletonMonoBehaviour is SingletonMonoBehaviour)
-						((SingletonMonoBehaviour)singletonMonoBehaviour).OnRegister();
+						singletonGameObject.transform.SetParent(gameObject.transform);
 				}
 			}
         }
@@ -137,11 +143,8 @@ namespace Utilities
 
 				Singletons.Add(type, monoBehaviour);
 
-				if (isPermanent && (gameObject.transform.parent == null) ? true : gameObject.GetComponentInParent<SingletonsManager>(true) == null)
-					gameObject.transform.SetParent(gameObject.transform);
-
-				if (monoBehaviour is SingletonMonoBehaviour)
-					((SingletonMonoBehaviour)monoBehaviour).OnRegister();
+				if (isPermanent && ((gameObject.transform.parent == null) ? true : gameObject.GetComponentInParent<SingletonsManager>(true) == null))
+					gameObject.transform.SetParent(this.gameObject.transform);
 			}
 		}
 

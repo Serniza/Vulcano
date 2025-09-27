@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Utilities
 {
-    public class SingletonMonoBehaviour : MonoBehaviour
+    public class SingletonMonoBehaviour<T> : MonoBehaviour
     {
         #region Variables & Properties
 
@@ -25,11 +25,9 @@ namespace Utilities
 
         protected virtual void Awake()
         {
-            Type type = GetType();
+            Type type = typeof(T);
 
 			SingletonsManager.Instance.RegisterMonoBehaviourAsASingleton(type, gameObject, this, isPermanent);
         }
-
-        public virtual void OnRegister() { }
     }
 }
