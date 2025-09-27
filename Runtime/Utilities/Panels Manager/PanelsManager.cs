@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Utilities
 {
-	public abstract class PanelsManager : SingletonMonoBehaviour
+	public abstract class PanelsManager : SingletonMonoBehaviour<PanelsManager>
 	{
 		#region Game Objects & External Components
 

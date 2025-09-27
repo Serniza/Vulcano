@@ -67,6 +67,9 @@ namespace Utilities
 							{
 								type = type.BaseType;
 
+								if (type.IsGenericType)
+									continue;
+
 								if (type == typeof(MonoBehaviour))
 									continue;
 
