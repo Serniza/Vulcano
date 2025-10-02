@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -34,7 +35,7 @@ namespace Utilities
 
 					EditorGUI.PropertyField(new Rect(position.x + labelWidth + fieldSize.x + 8f, position.y + 3f, fieldSize.x, fieldSize.y), gameObjectProperty, GUIContent.none, true);
 
-					List<KeyValuePair<Type, UnityEngine.MonoBehaviour>> typeMonoBehaviourPairs = new List<KeyValuePair<Type, UnityEngine.MonoBehaviour>>
+					List<KeyValuePair<Type, UnityEngine.MonoBehaviour>> singletons = new List<KeyValuePair<Type, UnityEngine.MonoBehaviour>>
 					{
 						new KeyValuePair<Type, UnityEngine.MonoBehaviour>(null, null)
 					};
@@ -52,28 +53,35 @@ namespace Utilities
 
 							Type type = monoBehaviour.GetType();
 
-							typeMonoBehaviourPairs.Add(new KeyValuePair<Type, UnityEngine.MonoBehaviour>(type, monoBehaviour));
+							singletons.Add(new KeyValuePair<Type, UnityEngine.MonoBehaviour>(type, monoBehaviour));
 
 							Type[] interfacesTypes = type.GetInterfaces();
 
-							for (int k = 0, interfacesTypesLength = interfacesTypes.Length; k < interfacesTypes.Length; k++)
-							{
-								Type interfaceType = interfacesTypes[k];
+							for (int k = 0, interfacesTypesLength = interfacesTypes.Length; k < interfacesTypesLength; k++)
+								singletons.Add(new KeyValuePair<Type, UnityEngine.MonoBehaviour>(interfacesTypes[k], monoBehaviour));
 
-								typeMonoBehaviourPairs.Add(new KeyValuePair<Type, UnityEngine.MonoBehaviour>(interfaceType, monoBehaviour));
-							}
-
-							while (type.BaseType != typeof(UnityEngine.MonoBehaviour))
+							while (type.BaseType != null && 
+								   type.BaseType != typeof(MonoBehaviour) && 
+								   type.BaseType != typeof(UnityEngine.MonoBehaviour))
 							{
 								type = type.BaseType;
 
 								if (type.IsGenericType)
 									continue;
 
-								if (type == typeof(MonoBehaviour))
-									continue;
+								singletons.Add(new KeyValuePair<Type, UnityEngine.MonoBehaviour>(type, monoBehaviour));
 
-								typeMonoBehaviourPairs.Add(new KeyValuePair<Type, UnityEngine.MonoBehaviour>(type, monoBehaviour));
+								interfacesTypes = type.GetInterfaces();
+
+								for (int k = 0, interfacesTypesLength = interfacesTypes.Length; k < interfacesTypesLength; k++)
+								{
+									Type interfaceType = interfacesTypes[k];
+
+									if (singletons.Any(singleton => singleton.Key == interfaceType))
+										continue;
+	
+									singletons.Add(new KeyValuePair<Type, UnityEngine.MonoBehaviour>(interfaceType, monoBehaviour));
+								}
 							}
 						}
 					}
@@ -86,11 +94,11 @@ namespace Utilities
 
 					if (typeProperty.stringValue != "None")
 					{
-						for (int j = 1, typeMonoBehaviourPairsCount = typeMonoBehaviourPairs.Count; j < typeMonoBehaviourPairsCount; j++)
+						for (int j = 1, typeMonoBehaviourPairsCount = singletons.Count; j < typeMonoBehaviourPairsCount; j++)
 						{
-							KeyValuePair<Type, UnityEngine.MonoBehaviour> typeMonoBehaviourPair = typeMonoBehaviourPairs[j];
+							KeyValuePair<Type, UnityEngine.MonoBehaviour> KeyValuePair = singletons[j];
 
-							if (typeMonoBehaviourPair.Key.AssemblyQualifiedName == typeProperty.stringValue && typeMonoBehaviourPair.Value == (UnityEngine.MonoBehaviour)monoBehaviourProperty.objectReferenceValue)
+							if (KeyValuePair.Key.AssemblyQualifiedName == typeProperty.stringValue && KeyValuePair.Value == (UnityEngine.MonoBehaviour)monoBehaviourProperty.objectReferenceValue)
 							{
 								typeIndex = j;
 
@@ -101,22 +109,22 @@ namespace Utilities
 
 					EditorGUI.LabelField(new Rect(position.x, position.y, labelWidth, position.height), "Type");
 
-					typeIndex = EditorGUI.Popup(new Rect(position.x + labelWidth, position.y + 3f, fieldSize.x, fieldSize.y), typeIndex, Array.ConvertAll(typeMonoBehaviourPairs.ToArray(), typeMonoBehaviourPair =>
+					typeIndex = EditorGUI.Popup(new Rect(position.x + labelWidth, position.y + 3f, fieldSize.x, fieldSize.y), typeIndex, Array.ConvertAll(singletons.ToArray(), keyValuePair =>
 					{
-						if (typeMonoBehaviourPair.Key == null && typeMonoBehaviourPair.Value == null)
+						if (keyValuePair.Key == null && keyValuePair.Value == null)
 							return "None";
 
-						Type monoBehaviourType = typeMonoBehaviourPair.Value.GetType();
+						Type monoBehaviourType = keyValuePair.Value.GetType();
 
-						if (typeMonoBehaviourPair.Key == monoBehaviourType)
-							return typeMonoBehaviourPair.Key.FullName.Replace('.', '/');
+						if (keyValuePair.Key == monoBehaviourType)
+							return keyValuePair.Key.FullName.Replace('.', '/');
 						else
 						{
 							string type = monoBehaviourType.FullName.Replace('.', '/');
 
 							string[] splitType = type.Split("/");
 
-							splitType[splitType.Length - 1] = $"({typeMonoBehaviourPair.Key.Name}) {splitType[splitType.Length - 1]}";
+							splitType[splitType.Length - 1] = $"({keyValuePair.Key.Name}) {splitType[splitType.Length - 1]}";
 
 							type = string.Join("/", splitType);
 
@@ -125,9 +133,9 @@ namespace Utilities
 
 					}));
 
-					typeProperty.stringValue = (typeIndex == 0) ? "None": typeMonoBehaviourPairs[typeIndex].Key.AssemblyQualifiedName;
+					typeProperty.stringValue = (typeIndex == 0) ? "None": singletons[typeIndex].Key.AssemblyQualifiedName;
 
-					monoBehaviourProperty.objectReferenceValue = (typeIndex == 0) ? null: typeMonoBehaviourPairs[typeIndex].Value;
+					monoBehaviourProperty.objectReferenceValue = (typeIndex == 0) ? null: singletons[typeIndex].Value;
 				},
 			};
         }

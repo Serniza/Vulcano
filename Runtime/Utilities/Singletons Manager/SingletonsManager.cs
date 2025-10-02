@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 namespace Utilities
 {
-    public class SingletonsManager : UnityEngine.MonoBehaviour
+    public class SingletonsManager : MonoBehaviour
 	{
         #region Variables & Properties
 
@@ -36,7 +36,7 @@ namespace Utilities
 		}
 
         [SerializeField] List<SingletonData> singletonsData;
-        Dictionary<Type, UnityEngine.MonoBehaviour> Singletons { get; set; }
+        Dictionary<Type, object> Singletons { get; set; }
 
         #endregion
 
@@ -55,7 +55,7 @@ namespace Utilities
 			if (singletonsData == null)
 				singletonsData = new List<SingletonData>();
 
-			Singletons = new Dictionary<Type, UnityEngine.MonoBehaviour>();
+			Singletons = new Dictionary<Type, object>();
 
 			for (int i = 0, singletonsDataCount = singletonsData.Count; i < singletonsDataCount; i++)
             {
@@ -86,7 +86,7 @@ namespace Utilities
 				UnityEngine.MonoBehaviour singletonMonoBehaviour = singletonData.MonoBehaviour;
 
 				// The singleton game object is a prefab
-				if (!singletonGameObject.scene.IsValid())
+				if (singletonGameObject.scene.rootCount == 0)
 				{
 					GameObject singletonPrefab = singletonGameObject;
 
@@ -102,9 +102,7 @@ namespace Utilities
 					{
 						SingletonData nextSingletonData = singletonsData[j];
 
-						Type nextSingletonType = (nextSingletonData.Type == "None") ? null : Type.GetType(nextSingletonData.Type);
-
-						if (nextSingletonType == null)
+						if (((nextSingletonData.Type == "None") ? null : Type.GetType(nextSingletonData.Type)) == null)
 							continue;
 
 						GameObject nextSingletonGameObject = nextSingletonData.GameObject;
@@ -124,12 +122,7 @@ namespace Utilities
 				}
 
 				if (!Singletons.ContainsKey(singletonType))
-				{
 					Singletons.Add(singletonType, singletonMonoBehaviour);
-
-					if (singletonGameObject.transform.parent != transform)
-						singletonGameObject.transform.SetParent(gameObject.transform);
-				}
 			}
         }
 
@@ -137,23 +130,19 @@ namespace Utilities
         {
 			if (!Singletons.ContainsKey(type))
 			{
-				SingletonData singletonData = new SingletonData(type.AssemblyQualifiedName, gameObject, monoBehaviour);
-
-				singletonsData.Add(singletonData);
+				singletonsData.Add(new SingletonData(type.AssemblyQualifiedName, gameObject, monoBehaviour));
 
 				Singletons.Add(type, monoBehaviour);
 
-				if (isPermanent && ((gameObject.transform.parent == null) ? true : gameObject.GetComponentInParent<SingletonsManager>(true) == null))
+				if (isPermanent && ((gameObject.transform.parent == null) ? true : gameObject.GetComponentInParent<SingletonsManager>() == null))
 					gameObject.transform.SetParent(this.gameObject.transform);
 			}
 		}
 
         public T GetSingleton<T>() where T : class
         {
-            Type type = typeof(T);
-
-            if (Singletons.TryGetValue(type, out UnityEngine.MonoBehaviour monoBehaviour))
-                return monoBehaviour as T;
+            if (Singletons.TryGetValue(typeof(T), out object singleton))
+                return (T)singleton;
            
             return null;
         }
@@ -162,7 +151,7 @@ namespace Utilities
         {
             List<Type> missedTypes = new List<Type>();
 
-            foreach (KeyValuePair<Type, UnityEngine.MonoBehaviour> singleton in Singletons)
+            foreach (KeyValuePair<Type, object> singleton in Singletons)
             {
                 if (singleton.Value == null)
                     missedTypes.Add(singleton.Key);

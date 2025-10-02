@@ -17,7 +17,7 @@ namespace Utilities
 
 		protected virtual void OnValidate()
 		{
-			if (!isPermanent && ((gameObject.transform.parent == null) ? false : gameObject.GetComponentInParent<SingletonsManager>(true) != null))
+			if (!isPermanent && ((gameObject.transform.parent == null) ? false : gameObject.GetComponentInParent<SingletonsManager>() != null))
 				isPermanent = true;
 		}
 
@@ -25,9 +25,7 @@ namespace Utilities
 
         protected virtual void Awake()
         {
-            Type type = typeof(T);
-
-			SingletonsManager.Instance.RegisterMonoBehaviourAsASingleton(type, gameObject, this, isPermanent);
+			SingletonsManager.Instance.RegisterMonoBehaviourAsASingleton(typeof(T), gameObject, this, isPermanent);
         }
     }
 }
