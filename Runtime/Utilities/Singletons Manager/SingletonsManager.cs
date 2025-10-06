@@ -16,7 +16,7 @@ namespace Utilities
 			{
 				if (instance == null)
 				{
-					instance = FindObjectOfType<SingletonsManager>();
+					instance = FindFirstObjectByType<SingletonsManager>();
 
 					if (instance == null)
 						instance = new GameObject("Singletons Manager", typeof(SingletonsManager)).GetComponent<SingletonsManager>();
