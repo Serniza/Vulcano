@@ -153,7 +153,7 @@ namespace Utilities
 
             foreach (KeyValuePair<Type, object> singleton in Singletons)
             {
-                if (singleton.Value == null)
+				if(singleton.Value == null || (singleton.Value is UnityEngine.Object unityObject && unityObject == null))
                     missedTypes.Add(singleton.Key);
             }
 
