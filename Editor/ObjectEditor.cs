@@ -144,7 +144,7 @@ namespace Attributes
 
 			FieldInfo field = targetType.GetField(property.name, bindingFlags);
 
-			while (field == null && targetType.BaseType != typeof(MonoBehaviour))
+			while (field == null && targetType.BaseType != typeof(UnityEngine.Object))
 			{
 				targetType = targetType.BaseType;
 
