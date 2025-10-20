@@ -9,8 +9,8 @@ namespace Attributes
 {
     [CanEditMultipleObjects]
 
-    [CustomEditor(typeof(MonoBehaviour), true, isFallback = true)]
-    public class Editor : UnityEditor.Editor
+    [CustomEditor(typeof(UnityEngine.Object), true, isFallback = true)]
+    public class ObjectEditor : Editor
     {
 		#region Variable & Properties
 
