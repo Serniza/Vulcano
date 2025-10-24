@@ -5,7 +5,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace Attributes
+namespace CustomAttributes
 {
     [CanEditMultipleObjects]
 
