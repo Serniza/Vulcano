@@ -5,7 +5,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace Attributes
+namespace CustomAttributes
 {
     [CanEditMultipleObjects]
 
@@ -333,9 +333,7 @@ namespace Attributes
 
                         SerializedProperty property = serializedObject.FindProperty(propertyPath);
 
-						SerializedPropertyType serializedPropertyType = serializedObject.FindProperty(propertyPath).propertyType;
-
-                        if (serializedPropertyType == SerializedPropertyType.Generic)
+                        if (property.hasVisibleChildren)
 							GUILayout.Space(standardSpacing.x);
 
 						ReadOnly readOnly = GetPropertyAttribute<ReadOnly>(property);

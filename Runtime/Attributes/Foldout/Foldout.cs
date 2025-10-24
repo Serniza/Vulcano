@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Attributes
+namespace CustomAttributes
 {
     public class Foldout: PropertyAttribute
     {
