@@ -26,7 +26,8 @@ namespace Utilities
 							instance.gameObject.transform.SetParent(null, true);
 					}
 
-					DontDestroyOnLoad(instance.gameObject);
+					if(Application.isPlaying)
+						DontDestroyOnLoad(instance.gameObject);
 
 					instance.RegisterInitialSingletons();
 				}
@@ -38,7 +39,7 @@ namespace Utilities
         [SerializeField] List<SingletonData> singletonsData;
         Dictionary<Type, object> Singletons { get; set; }
 
-        #endregion
+		#endregion
 
         void OnEnable()
         {
