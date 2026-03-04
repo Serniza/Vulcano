@@ -22,7 +22,7 @@ namespace Utilities
 						instance = new GameObject("Singletons Manager", typeof(SingletonsManager)).GetComponent<SingletonsManager>();
 					else
 					{
-						if (instance.gameObject.transform.parent != null)
+						if (Application.isPlaying && instance.gameObject.transform.parent != null)
 							instance.gameObject.transform.SetParent(null, true);
 					}
 
