@@ -3,8 +3,14 @@ using UnityEngine;
 
 namespace Utilities
 {
-	public abstract class Panel : MonoBehaviour
+	public abstract class Panel : MonoBehaviour, IInitializable
 	{
+		#region Variables & Properties
+
+		public bool IsInitialized { get; private set; }
+
+		#endregion
+
 		#region Game Objects & External Components
 
 		protected PanelsManager panelsManager;
@@ -14,6 +20,8 @@ namespace Utilities
 		public virtual void Initialize()
 		{
 			panelsManager = this.GetSingleton<PanelsManager>();
+
+			IsInitialized = true;
 		}
 
 		public virtual void OnOpen(List<object> parameters = null) { }
