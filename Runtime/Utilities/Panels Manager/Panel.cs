@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Utilities
@@ -24,7 +23,7 @@ namespace Utilities
 			panelsManager = this.GetSingleton<PanelsManager>();
 		}
 
-		public virtual void OnOpen(List<object> parameters = null) { }
+		public virtual void OnOpen(object[] parameters = null) { }
 
 		public virtual void Close() { }
 

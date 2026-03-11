@@ -13,7 +13,7 @@ namespace Utilities
 
 		#endregion
 
-		public void OpenPanel(Panel panel, List<object> parameters = null, bool hideCurrentPanel = false)
+		public void OpenPanel(Panel panel, object[] parameters = null, bool hideCurrentPanel = false)
 		{
 			if (activePanels.Count > 0)
 			{
@@ -40,7 +40,7 @@ namespace Utilities
 			panel.OnOpen(parameters);
 		}
 
-		public void SwapCurrentPanel(Panel panel, List<object> parameters = null)
+		public void SwapCurrentPanel(Panel panel, object[] parameters = null)
 		{
 			if (activePanels.Count > 0)
 			{
