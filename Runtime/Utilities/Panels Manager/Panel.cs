@@ -19,9 +19,9 @@ namespace Utilities
 
 		public virtual void Initialize()
 		{
-			panelsManager = this.GetSingleton<PanelsManager>();
-
 			IsInitialized = true;
+
+			panelsManager = this.GetSingleton<PanelsManager>();
 		}
 
 		public virtual void OnOpen(List<object> parameters = null) { }
