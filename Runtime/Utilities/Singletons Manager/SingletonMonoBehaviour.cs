@@ -17,8 +17,11 @@ namespace Utilities
 
 		protected virtual void OnValidate()
 		{
-			if (!isPermanent && ((gameObject.transform.parent == null) ? false : gameObject.GetComponentInParent<SingletonsManager>() != null))
-				isPermanent = true;
+            if (!Application.isPlaying)
+            {
+                if (!isPermanent && ((gameObject.transform.parent == null) ? false : gameObject.GetComponentInParent<SingletonsManager>() != null))
+                    isPermanent = true;
+            }
 		}
 
         #endif
