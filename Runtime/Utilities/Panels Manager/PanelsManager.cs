@@ -61,6 +61,25 @@ namespace Utilities
 			panel.OnOpen(parameters);
 		}
 
+		public void CloseActivePanel(Panel panel)
+		{
+			for (int i = activePanels.Count - 1; i >= 0; i--)
+			{
+				Panel activePanel = activePanels[i];
+
+				if (panel == activePanel)
+				{
+					activePanels.Remove(activePanel);
+
+					activePanel.gameObject.SetActive(false);
+
+					activePanel.OnClose();
+
+					break;
+				}
+			}
+		}
+
 		public void CloseCurrentPanel(bool openLastPanel = false)
 		{
 			Panel currentPanel = activePanels[activePanels.Count - 1];

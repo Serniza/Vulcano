@@ -25,8 +25,6 @@ namespace Utilities
 
 		public virtual void OnOpen(object[] parameters = null) { }
 
-		public virtual void Close() { }
-
-		public virtual void OnClose() { }
+		public virtual void OnClose(object[] parameters = null) { }
 	}
 }
