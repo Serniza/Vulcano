@@ -6,5 +6,5 @@ public interface IInitializable
 
 	#endregion
 
-	void Initialize();
+	void Initialize(object[] parameters = null);
 }

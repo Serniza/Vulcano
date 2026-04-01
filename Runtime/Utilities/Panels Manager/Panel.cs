@@ -16,7 +16,7 @@ namespace Utilities
 
 		#endregion
 
-		public virtual void Initialize()
+		public virtual void Initialize(object[] parameters = null)
 		{
 			IsInitialized = true;
 
