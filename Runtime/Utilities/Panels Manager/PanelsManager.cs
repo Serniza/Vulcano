@@ -1,4 +1,5 @@
 using CustomAttributes;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -85,8 +86,10 @@ namespace Utilities
 		/// Close Active Panel With Delay.
 		/// </summary>
 		/// <param name="delay">Time in seconds.</param>
-		public void CloseActivePanelWithDelay(Panel panel, float delay)
+		public void CloseActivePanelWithDelay(Panel panel, float delay, Action onStartDelay)
 		{
+			onStartDelay?.Invoke();
+
 			StartCoroutine(CloseActivePanelWithDelayCoroutine(panel, delay));
 		}
 
