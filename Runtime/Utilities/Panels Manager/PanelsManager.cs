@@ -1,4 +1,5 @@
 using CustomAttributes;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -78,6 +79,22 @@ namespace Utilities
 					break;
 				}
 			}
+		}
+
+		/// <summary>
+		/// Close Active Panel With Delay.
+		/// </summary>
+		/// <param name="delay">Time in seconds.</param>
+		public void CloseActivePanelWithDelay(Panel panel, float delay)
+		{
+			StartCoroutine(CloseActivePanelWithDelayCoroutine(panel, delay));
+		}
+
+		IEnumerator CloseActivePanelWithDelayCoroutine(Panel panel, float delay)
+		{
+			yield return new WaitForSeconds(delay);
+
+			CloseActivePanel(panel);
 		}
 
 		public void CloseCurrentPanel(bool openLastPanel = false)
