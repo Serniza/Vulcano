@@ -86,15 +86,15 @@ namespace Utilities
 		/// Close Active Panel With Delay.
 		/// </summary>
 		/// <param name="delay">Time in seconds.</param>
-		public void CloseActivePanelWithDelay(Panel panel, float delay, Action onStartDelay)
+		public void CloseActivePanelWithDelay(Panel panel, float delay, Action onStartDelay = null)
+		{
+			StartCoroutine(CloseActivePanelWithDelayCoroutine(panel, delay, onStartDelay));
+		}
+
+		IEnumerator CloseActivePanelWithDelayCoroutine(Panel panel, float delay, Action onStartDelay = null)
 		{
 			onStartDelay?.Invoke();
 
-			StartCoroutine(CloseActivePanelWithDelayCoroutine(panel, delay));
-		}
-
-		IEnumerator CloseActivePanelWithDelayCoroutine(Panel panel, float delay)
-		{
 			yield return new WaitForSeconds(delay);
 
 			CloseActivePanel(panel);
