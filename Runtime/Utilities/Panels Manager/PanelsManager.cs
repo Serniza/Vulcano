@@ -82,10 +82,6 @@ namespace Utilities
 			}
 		}
 
-		/// <summary>
-		/// Close Active Panel With Delay.
-		/// </summary>
-		/// <param name="delay">Time in seconds.</param>
 		public void CloseActivePanelWithDelay(Panel panel, float delay, Action onStartDelay = null)
 		{
 			StartCoroutine(CloseActivePanelWithDelayCoroutine(panel, delay, onStartDelay));

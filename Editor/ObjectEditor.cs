@@ -333,7 +333,7 @@ namespace CustomAttributes
 
                         SerializedProperty property = serializedObject.FindProperty(propertyPath);
 
-                        if (property.hasVisibleChildren)
+                        if ((property.propertyType == SerializedPropertyType.Generic && property.hasVisibleChildren) || (property.isArray && property.propertyType != SerializedPropertyType.String))
 							GUILayout.Space(standardSpacing.x);
 
 						ReadOnly readOnly = GetPropertyAttribute<ReadOnly>(property);
