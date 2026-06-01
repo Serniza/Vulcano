@@ -1,0 +1,37 @@
+using UnityEngine;
+
+namespace Utilities
+{
+	public abstract class Panel : MonoBehaviour, IInitializable
+	{
+		#region Variables & Properties
+
+		public bool IsInitialized { get; private set; }
+
+		#endregion
+
+		#region Game Objects & External Components
+
+		protected PanelsManager panelsManager;
+
+		#endregion
+
+		public virtual void Initialize(object[] parameters = null)
+		{
+			if(IsInitialized)
+				return;
+
+			IsInitialized = true;
+
+			panelsManager = this.GetSingleton<PanelsManager>();
+		}
+
+		public virtual void OnDelayedOpenStart() { }
+
+		public virtual void OnOpen(object[] parameters = null) { }
+
+		public virtual void OnDelayedCloseStart(float delay) { }
+
+		public virtual void OnClose(object[] parameters = null) { }
+	}
+}
