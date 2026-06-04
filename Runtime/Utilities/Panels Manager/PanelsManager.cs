@@ -77,7 +77,7 @@ namespace Utilities
 			popup.OnOpen(openingParameters);
 		}
 
-		public void SwapCurrentPanel(Panel panel, object[] parameters = null)
+		public void SwapCurrentPanel(Panel panel, object[] openingParameters = null, object[] closingParameters = null)
 		{
 			if (activePanels.Count > 0)
 			{
@@ -89,7 +89,7 @@ namespace Utilities
 
 					currentPanel.gameObject.SetActive(false);
 
-					currentPanel.OnClose();
+					currentPanel.OnClose(closingParameters);
 				}
 			}
 
@@ -97,17 +97,17 @@ namespace Utilities
 
 			panel.gameObject.SetActive(true);
 
-			panel.OnOpen(parameters);
+			panel.OnOpen(openingParameters);
 		}
 
-		public void CloseCurrentPopupWithDelay(float delay, bool openLastPanel = false)
+		public void CloseCurrentPopupWithDelay(float delay, object[] closingParameters = null, bool openLastPanel = false)
 		{
 			Popup currentPopup = (Popup)activePanels[activePanels.Count - 1];
 
-			StartCoroutine(ClosePopupWithDelayCoroutine(currentPopup, delay, openLastPanel));
+			StartCoroutine(ClosePopupWithDelayCoroutine(currentPopup, delay, closingParameters, openLastPanel));
 		}
 
-		public void ClosePanel(Panel panel)
+		public void ClosePanel(Panel panel, object[] closingParameters = null)
 		{
 			for (int i = activePanels.Count - 1; i >= 0; i--)
 			{
@@ -119,33 +119,33 @@ namespace Utilities
 
 					activePanel.gameObject.SetActive(false);
 
-					activePanel.OnClose();
+					activePanel.OnClose(closingParameters);
 
 					break;
 				}
 			}
 		}
 
-		public void ClosePanelWithDelay(Panel panel, float delay)
+		public void ClosePanelWithDelay(Panel panel, float delay, object[] closingParameters = null)
 		{
-			StartCoroutine(ClosePanelWithDelayCoroutine(panel, delay));
+			StartCoroutine(ClosePanelWithDelayCoroutine(panel, delay, closingParameters));
 		}
 
-		IEnumerator ClosePanelWithDelayCoroutine(Panel panel, float delay)
+		IEnumerator ClosePanelWithDelayCoroutine(Panel panel, float delay, object[] closingParameters = null)
 		{
 			panel.OnDelayedCloseStart(delay);
 
 			yield return new WaitForSeconds(delay);
 
-			ClosePanel(panel);
+			ClosePanel(panel, closingParameters);
 		}
 
-		public void ClosePopupWithDelay(Popup popup, float delay, bool openLastPanel = false)
+		public void ClosePopupWithDelay(Popup popup, float delay, object[] closingParameters = null, bool openLastPanel = false)
 		{
-			StartCoroutine(ClosePopupWithDelayCoroutine(popup, delay, openLastPanel));
+			StartCoroutine(ClosePopupWithDelayCoroutine(popup, delay, closingParameters, openLastPanel));
 		}
 
-		IEnumerator ClosePopupWithDelayCoroutine(Popup popup, float delay, bool openLastPanel = false)
+		IEnumerator ClosePopupWithDelayCoroutine(Popup popup, float delay, object[] closingParameters = null, bool openLastPanel = false)
 		{
 			popup.OnDelayedCloseStart(delay);
 
@@ -155,7 +155,7 @@ namespace Utilities
 
 			popup.gameObject.SetActive(false);
 
-			popup.OnClose();
+			popup.OnClose(closingParameters);
 
 			AsyncOperation asyncSceneUnloading = SceneManager.UnloadSceneAsync(popup.gameObject.scene.name);
 
