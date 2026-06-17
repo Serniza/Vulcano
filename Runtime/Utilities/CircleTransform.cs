@@ -10,7 +10,7 @@ namespace SernizaGamesCore
     {
         #region Variables & Properties
 
-        [Foldout("Variables & Properties")]
+        [Foldout("Variables")]
         [SerializeField] float radius;
         public float Radius
         {
@@ -22,7 +22,7 @@ namespace SernizaGamesCore
                 SetCoordinates((transform.parent == null) ? Vector2.zero : (Vector2)transform.parent.position);
             }
         }
-        [Foldout("Variables & Properties")]
+        [Foldout("Variables")]
         [SerializeField][Range(0f, 360f, order = 2)] float angle;
         public float Angle
         {
