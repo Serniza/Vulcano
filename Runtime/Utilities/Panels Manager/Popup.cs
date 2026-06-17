@@ -1,9 +1,7 @@
-using CustomAttributes;
-using System;
 using System.Collections;
 using UnityEngine;
 
-namespace Utilities
+namespace SernizaGamesCore
 {
     public class Popup : Panel 
     {

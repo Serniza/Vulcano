@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Utilities
+namespace SernizaGamesCore
 {
     public class SingletonsManager : MonoBehaviour
 	{

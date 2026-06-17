@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace CustomAttributes
+namespace SernizaGamesCore
 {
     public class Foldout: PropertyAttribute
     {

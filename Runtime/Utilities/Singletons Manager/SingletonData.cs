@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Utilities
+namespace SernizaGamesCore
 {
     [Serializable]
     public class SingletonData

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Utilities
+namespace SernizaGamesCore
 {
 	public abstract class Panel : MonoBehaviour, IInitializable
 	{

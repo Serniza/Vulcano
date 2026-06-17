@@ -1,10 +1,13 @@
-public interface IInitializable
+namespace SernizaGamesCore
 {
-	#region Variables & Properties
+	public interface IInitializable
+	{
+		#region Variables & Properties
 
-	bool IsInitialized { get; }
+		bool IsInitialized { get; }
 
-	#endregion
+		#endregion
 
-	void Initialize(object[] parameters = null);
+		void Initialize(object[] parameters = null);
+	}
 }

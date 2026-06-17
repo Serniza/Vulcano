@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
-namespace Utilities
+namespace SernizaGamesCore
 {
     [CustomEditor(typeof(SingletonsManager))]
     public class SingletonsManagerData : Editor

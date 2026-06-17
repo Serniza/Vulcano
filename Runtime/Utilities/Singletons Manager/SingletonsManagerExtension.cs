@@ -1,4 +1,4 @@
-using Utilities;
+using SernizaGamesCore;
 using UnityEngine;
 
 public static class SingletonsManagerExtension

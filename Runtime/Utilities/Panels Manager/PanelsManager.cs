@@ -1,11 +1,9 @@
-using CustomAttributes;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Utilities
+namespace SernizaGamesCore
 {
 	public abstract class PanelsManager : SingletonMonoBehaviour<PanelsManager>
 	{

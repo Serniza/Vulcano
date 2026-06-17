@@ -1,202 +1,205 @@
 using System;
 using System.Collections.Generic;
 
-public static class JsonHandler
+namespace SernizaGamesCore
 {
-	public static Dictionary<string, string> ToDictionary(string json)
+    public static class JsonHandler
     {
-		Dictionary<string, string> dictionary = new Dictionary<string, string>();
+		public static List<string> ToList(string jsonArray)
+		{
+			List<string> list = new List<string>();
 
-        json = json.Replace(Environment.NewLine, "");
+			if (jsonArray.Length < 3)
+				return list;
 
-        if (json.Length < 6)
-            return dictionary;
+			string value = "";
 
-        bool isKey = true;
-        string key = "";
+			int depth = 0;
 
-        bool isValue = false;
-        string value = "";
+			for (int i = 1, jsonLength = jsonArray.Length; i < jsonLength - 1; i++)
+			{
+				switch (jsonArray[i])
+				{
+					case '"':
+						if (depth > 0)
+							value += jsonArray[i];
 
-        int depth = 0;
+						break;
+					case ',':
+						if (depth == 0)
+						{
+							list.Add(value);
 
-        for (int i = 2, jsonLength = json.Length; i < jsonLength - 1; i++)
+							value = "";
+						}
+
+						else
+							value += jsonArray[i];
+
+						break;
+					case '{':
+						depth++;
+
+						value += jsonArray[i];
+
+						break;
+					case '[':
+						depth++;
+
+						value += jsonArray[i];
+
+						break;
+					case ']':
+						depth--;
+
+						value += jsonArray[i];
+
+						break;
+					case '}':
+						depth--;
+
+						value += jsonArray[i];
+
+						break;
+					default:
+						value += jsonArray[i];
+
+						break;
+				}
+			}
+
+			if (value != "")
+				list.Add(value);
+
+			return list;
+		}
+
+		public static Dictionary<string, string> ToDictionary(string json)
         {
-            switch (json[i])
+            Dictionary<string, string> dictionary = new Dictionary<string, string>();
+
+            json = json.Replace(Environment.NewLine, "");
+
+            if (json.Length < 6)
+                return dictionary;
+
+            bool isKey = true;
+            string key = "";
+
+            bool isValue = false;
+            string value = "";
+
+            int depth = 0;
+
+            for (int i = 2, jsonLength = json.Length; i < jsonLength - 1; i++)
             {
-                case '"':
-                    if (isKey)
-                    {
-                        if (json[i + 1] == ':')
+                switch (json[i])
+                {
+                    case '"':
+                        if (isKey)
                         {
-                            if (json[i + 2] == '"')
-                                i += 2;
-                            else
-                                i++;
-
-                            isKey = false;
-
-                            isValue = true;
-                        }
-                    }
-                    else
-                    {
-                        if (depth == 0)
-                        {
-                            if (json[i + 1] == ',')
+                            if (json[i + 1] == ':')
                             {
-                                i += 2;
+                                if (json[i + 2] == '"')
+                                    i += 2;
+                                else
+                                    i++;
 
-                                isKey = true;
+                                isKey = false;
 
-                                isValue = false;
-
-                                dictionary.Add(key, value);
-
-                                key = "";
-
-                                value = "";
+                                isValue = true;
                             }
                         }
                         else
-                            value += json[i];
-                    }
-
-                    break;
-                case ',':
-                    if (isValue)
-                    {
-                        if (depth == 0)
                         {
-                            if (json[i + 1] == '"')
+                            if (depth == 0)
                             {
-                                i++;
+                                if (json[i + 1] == ',')
+                                {
+                                    i += 2;
 
-                                isKey = true;
+                                    isKey = true;
 
-                                isValue = false;
+                                    isValue = false;
 
-                                dictionary.Add(key, value);
+                                    dictionary.Add(key, value);
 
-                                key = "";
+                                    key = "";
 
-                                value = "";
+                                    value = "";
+                                }
+                            }
+                            else
+                                value += json[i];
+                        }
+
+                        break;
+                    case ',':
+                        if (isValue)
+                        {
+                            if (depth == 0)
+                            {
+                                if (json[i + 1] == '"')
+                                {
+                                    i++;
+
+                                    isKey = true;
+
+                                    isValue = false;
+
+                                    dictionary.Add(key, value);
+
+                                    key = "";
+
+                                    value = "";
+                                }
+                                else
+                                    value += json[i];
                             }
                             else
                                 value += json[i];
                         }
                         else
                             value += json[i];
-                    }
-                    else
+
+                        break;
+                    case '{':
+                        depth++;
+
                         value += json[i];
 
-                    break;
-                case '{':
-                    depth++;
+                        break;
+                    case '[':
+                        depth++;
 
-                    value += json[i];
-
-                    break;
-                case '[':
-                    depth++;
-
-                    value += json[i];
-
-                    break;
-                case ']':
-                    depth--;
-
-                    value += json[i];
-
-                    break;
-                case '}':
-                    depth--;
-
-                    value += json[i];
-
-                    break;
-                default:
-                    if (isKey)
-                        key += json[i];
-                    else
                         value += json[i];
 
-                    break;
+                        break;
+                    case ']':
+                        depth--;
+
+                        value += json[i];
+
+                        break;
+                    case '}':
+                        depth--;
+
+                        value += json[i];
+
+                        break;
+                    default:
+                        if (isKey)
+                            key += json[i];
+                        else
+                            value += json[i];
+
+                        break;
+                }
             }
+            if (key != "")
+                dictionary.Add(key, value);
+
+            return dictionary;
         }
-		if (key != "")
-            dictionary.Add(key, value);
-
-        return dictionary;
-    }
-
-    public static List<string> ToList(string json)
-    {
-        List<string> list = new List<string>();
-
-        if (json.Length < 3)
-            return list;
-
-        string value = "";
-
-        int depth = 0;
-
-        for (int i = 1, jsonLength = json.Length; i < jsonLength - 1; i++)
-        {
-            switch (json[i])
-            {
-                case '"':
-                    if (depth > 0)
-                        value += json[i];
-
-                    break;
-                case ',':
-                    if (depth == 0)
-                    {
-                        list.Add(value);
-
-                        value = "";
-                    }
-
-                    else
-                        value += json[i];
-
-                    break;
-                case '{':
-                    depth++;
-
-                    value += json[i];
-
-                    break;
-                case '[':
-                    depth++;
-
-                    value += json[i];
-
-                    break;
-                case ']':
-                    depth--;
-
-                    value += json[i];
-
-                    break;
-                case '}':
-                    depth--;
-
-                    value += json[i];
-
-                    break;
-                default:
-                    value += json[i];
-
-                    break;
-            }
-        }
-
-        if (value != "")
-            list.Add(value);
-
-        return list;
     }
 }

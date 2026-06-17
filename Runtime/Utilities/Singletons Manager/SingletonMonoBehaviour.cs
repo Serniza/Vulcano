@@ -1,8 +1,6 @@
-using CustomAttributes;
-using System;
 using UnityEngine;
 
-namespace Utilities
+namespace SernizaGamesCore
 {
     public class SingletonMonoBehaviour<T> : MonoBehaviour
     {

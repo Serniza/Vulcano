@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CustomAttributes
+namespace SernizaGamesCore
 {
     public class Folder
     {
