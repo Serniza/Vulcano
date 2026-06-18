@@ -1,6 +1,6 @@
 # Vulcano
 
-## Unity Games Core
+## Unity Games Core Package
 
 A set of attributes and utilities created to speed up the development of my own Unity games. The goal is to improve productivity, code organization, and project extensibility.
 
