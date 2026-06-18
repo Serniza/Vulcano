@@ -1,6 +1,6 @@
 # Vulcano
 
-## Unity Game Developer Toolkit
+## Unity Games Core
 
 A set of tools and utilities created to speed up the development of my own Unity games. The goal is to improve productivity, code organization, and project extensibility.
 
