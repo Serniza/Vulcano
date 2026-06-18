@@ -2,7 +2,7 @@
 
 ## Unity Games Core
 
-A set of tools and utilities created to speed up the development of my own Unity games. The goal is to improve productivity, code organization, and project extensibility.
+A set of attributes and utilities created to speed up the development of my own Unity games. The goal is to improve productivity, code organization, and project extensibility.
 
 ### Singletons Manager
 
@@ -18,11 +18,11 @@ You can drag any GameObject into the component.
 
 ![Singletons Manager 1](https://github.com/user-attachments/assets/a85f2b86-21d8-41a5-baaf-1d6714109a53)
 
-You can select any MonoBehaviour or interface from that component.
+You can select any MonoBehaviour or interface from that GameObject.
 
 ![Singletons Manager 2](https://github.com/user-attachments/assets/47186383-5461-41f7-86aa-735ab214d592)
 
-When the game starts, all references are automatically registered in Awake (important).
+When the game starts, all references are automatically registered in Awake (important) with the selected type.
 
 ![Singletons Manager 3](https://github.com/user-attachments/assets/f29d20a1-200e-40ad-9e81-ac754be1532c)
 
@@ -34,7 +34,7 @@ Or if it is not a MonoBehaviour:
 
 ![Singletons Manager 5](https://github.com/user-attachments/assets/224d6afb-ae4f-4dd6-9b05-52afd92370d0)
 
-Additionally, there is a base class you can inherit from that automatically registers the MonoBehaviour in its Awake method.
+Additionally, exist a base class you can inherit from that automatically registers the MonoBehaviour in its Awake method.
 
 ![Singletons Manager 5](https://github.com/user-attachments/assets/4559e31e-c352-48c5-855a-f88f5e87f59e)
 
