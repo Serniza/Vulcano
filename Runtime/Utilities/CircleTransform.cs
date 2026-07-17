@@ -108,17 +108,22 @@ namespace SernizaGamesCore
 
         void SetCoordinates(Vector2 center)
         {
-            float radians = (angle * Mathf.PI) / 180f;
-
-            float x = radius * Mathf.Cos(radians) + center.x;
-            float y = radius * Mathf.Sin(radians) + center.y;
-
-            transform.position = new Vector3(x, y, transform.position.z);
+            SetCoordinates(transform, center, radius, angle);
         }
 
-        #if UNITY_EDITOR
+        public static void SetCoordinates(Transform transform, Vector2 center, float radius, float angle)
+        {
+			float radians = (angle * Mathf.PI) / 180f;
 
-        void OnDrawGizmosSelected()
+			float x = radius * Mathf.Cos(radians) + center.x;
+			float y = radius * Mathf.Sin(radians) + center.y;
+
+			transform.position = new Vector3(x, y, transform.position.z);
+		}
+
+		#if UNITY_EDITOR
+
+		void OnDrawGizmosSelected()
         {
             Handles.DrawWireDisc((transform.parent == null) ? Vector2.zero : (Vector2)transform.parent.position, Vector3.back, radius);
 

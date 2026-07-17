@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SernizaGamesCore
 {
-    public class Folder
+    internal class Folder
     {
         #region Variables & Properties
 

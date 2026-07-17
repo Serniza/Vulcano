@@ -10,7 +10,7 @@ namespace SernizaGamesCore
 		#region Game Objects & External Components
 
 		[Foldout("PanelsManager/Game Objects & External Components")]
-		[ReadOnly][SerializeField] protected List<Panel> activePanels;
+		[SerializeField] protected List<Panel> activePanels;
 
 		#endregion
 

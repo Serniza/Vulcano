@@ -62,9 +62,9 @@ namespace SernizaGamesCore
 						if ((string)properties[i] == "m_Script")
 							GUI.enabled = false;
 
-                        EditorGUILayout.PropertyField(property, true);
+						EditorGUILayout.PropertyField(property, true);
 
-                        if (!GUI.enabled)
+						if (!GUI.enabled)
 							GUI.enabled = true;
 					}
 					else
@@ -91,15 +91,7 @@ namespace SernizaGamesCore
 			{
 				List<string> splitPath = new List<string>(foldout.path.Split('/'));
 
-				for (int i = 0, splitPathCount = splitPath.Count; i < splitPathCount; i++)
-				{
-					if (string.IsNullOrEmpty(splitPath[i]))
-					{
-						splitPath.RemoveAt(i);
-
-						i--;
-					}
-				}
+				splitPath.RemoveAll(string.IsNullOrEmpty);
 
 				Folder folder = GetFolder(properties, splitPath);
 
@@ -142,17 +134,17 @@ namespace SernizaGamesCore
 									  | BindingFlags.NonPublic
 									  | BindingFlags.Public;
 
-			FieldInfo field = targetType.GetField(property.name, bindingFlags);
+			FieldInfo fieldInfo = targetType.GetField(property.name, bindingFlags);
 
-			while (field == null && targetType.BaseType != typeof(UnityEngine.Object))
+			while (fieldInfo == null && targetType.BaseType != typeof(UnityEngine.Object))
 			{
 				targetType = targetType.BaseType;
 
-				field = targetType.GetField(property.name, bindingFlags);
+				fieldInfo = targetType.GetField(property.name, bindingFlags);
 			}
 
-			if (field != null)
-				return field.GetCustomAttributes(typeof(T), true).ToList();
+			if (fieldInfo != null)
+				return fieldInfo.GetCustomAttributes(typeof(T), true).ToList();
 
 			return null;
 		}
@@ -336,15 +328,7 @@ namespace SernizaGamesCore
                         if ((property.propertyType == SerializedPropertyType.Generic && property.hasVisibleChildren) || (property.isArray && property.propertyType != SerializedPropertyType.String))
 							GUILayout.Space(standardSpacing.x);
 
-						ReadOnly readOnly = GetPropertyAttribute<ReadOnly>(property);
-
-						if (readOnly != null)
-							GUI.enabled = false;
-
 						EditorGUILayout.PropertyField(property, true);
-
-						if (readOnly != null)
-							GUI.enabled = true;
 
 						EditorGUILayout.EndHorizontal();
 					}
