@@ -7,6 +7,24 @@ namespace SernizaGamesCore
 {
 	public abstract class PanelsManager : SingletonMonoBehaviour<PanelsManager>
 	{
+		#region Variables & Properties
+
+		public bool hasActivePopup
+		{
+			get
+			{
+				for (int i = 0, activePanelsCount = activePanels.Count; i < activePanelsCount; i++)
+				{
+					if (activePanels[i] is Popup)
+						return true;
+				}
+
+				return false;
+			}
+		}
+
+		#endregion
+
 		#region Game Objects & External Components
 
 		[Foldout("PanelsManager/Game Objects & External Components")]
@@ -198,6 +216,15 @@ namespace SernizaGamesCore
 
 					break;
 				}
+			}
+		}
+
+		public void CloseAllPopupsWhitDelay(float delay)
+		{
+			for (int i = 0, activePanelsCount = activePanels.Count; i < activePanelsCount; i++)
+			{
+				if (activePanels[i] is Popup popup)
+					ClosePopupWithDelay(popup, delay);
 			}
 		}
 	}
