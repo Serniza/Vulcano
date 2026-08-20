@@ -23,6 +23,9 @@ namespace SernizaGamesCore
 			}
 		}
 
+		[Foldout("PanelsManager/Variables")]
+		[SerializeField] AudioClip buttonClickAudioClip;
+
 		#endregion
 
 		#region Game Objects & External Components
@@ -227,5 +230,7 @@ namespace SernizaGamesCore
 					ClosePopupWithDelay(popup, delay);
 			}
 		}
+
+		public abstract void PlayButtonClickSound();
 	}
 }
