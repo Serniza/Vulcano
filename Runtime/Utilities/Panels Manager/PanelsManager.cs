@@ -24,7 +24,7 @@ namespace SernizaGamesCore
 		}
 
 		[Foldout("PanelsManager/Variables")]
-		[SerializeField] AudioClip buttonClickAudioClip;
+		[SerializeField] protected AudioClip buttonClickAudioClip;
 
 		#endregion
 
