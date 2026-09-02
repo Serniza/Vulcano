@@ -4,7 +4,7 @@ namespace SernizaGamesCore
 	{
 		#region Variables & Properties
 
-		bool IsInitialized { get; }
+		TriBool IsInitialized { get; }
 
 		#endregion
 

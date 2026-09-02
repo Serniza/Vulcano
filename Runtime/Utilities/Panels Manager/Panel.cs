@@ -6,7 +6,7 @@ namespace SernizaGamesCore
 	{
 		#region Variables & Properties
 
-		public bool IsInitialized { get; private set; }
+		public TriBool IsInitialized { get; private set; }
 
 		#endregion
 
@@ -18,12 +18,14 @@ namespace SernizaGamesCore
 
 		public virtual void Initialize(object[] parameters = null)
 		{
-			if(IsInitialized)
+			if(IsInitialized > false)
 				return;
 
-			IsInitialized = true;
+			IsInitialized = TriBool.Undefined;
 
 			panelsManager = this.GetSingleton<PanelsManager>();
+
+			IsInitialized = true;
 		}
 
 		public virtual void OnDelayedOpenStart() { }
