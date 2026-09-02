@@ -21,8 +21,6 @@ namespace SernizaGamesCore
 			if(IsInitialized > false)
 				return;
 
-			IsInitialized = TriBool.Undefined;
-
 			panelsManager = this.GetSingleton<PanelsManager>();
 
 			IsInitialized = true;
