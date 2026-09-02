@@ -6,7 +6,7 @@ namespace SernizaGamesCore
 	{
 		#region Variables & Properties
 
-		public TriBool IsInitialized { get; private set; }
+		public TriBool IsInitialized { get; protected set; }
 
 		#endregion
 
