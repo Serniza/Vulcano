@@ -18,7 +18,7 @@ namespace SernizaGamesCore
 
 		public virtual void Initialize(object[] parameters = null)
 		{
-			if(IsInitialized > false)
+			if(IsInitialized != false)
 				return;
 
 			panelsManager = this.GetSingleton<PanelsManager>();
